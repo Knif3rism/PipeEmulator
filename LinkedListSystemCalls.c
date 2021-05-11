@@ -14,19 +14,40 @@
 
 LinkedList* newList(int fileSize, char* fileName)
 {
-    int size, status;
+    int fileDescriptor, status;
+    size_t t_Size;
 
-    /* stat gives the file size of the file */
-    struct stat fileSize;
+    int* mem_map;
+
+    /* stat gives the file fileDescriptor of the file */
+    struct stat statSize;
     struct LinkedList *newList;
 
-    size = open(fileName, O_RDONLY);
+    fileDescriptor = open(fileName, O_RDONLY);
 
-    if (size < 0)
+    if (fileDescriptor < 0)
     {
-        fprintf(stderr, "%s", "Failed to open file");
+        fprintf(stderr, "%s");
     }
 
-    status = fstat(size, &fileSize);
+    status = fstat(fileDescriptor, &statSize);
+
+    if (status < 0)
+    {
+        fprintf(stderr, "%s");
+    }
+
+    t_Size = statSize.st_size;
+
+    mem_map = mmap(0, fileDescriptor, PROT_READ, MAP_ANON, fileDescriptor, 0);
+
+    newList = mmap(0, sizeof(LinkedList*), PROT_READ | PROT_WRITE, MAP_ANON, 0, 0);
+    newList->head = NULL;
+    newList->tail = NULL;
+    newList->mem_map = mem_map;
+}
+
+void insertLast(LinkedList list, char* string)
+{
 
 }

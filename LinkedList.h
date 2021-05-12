@@ -3,10 +3,16 @@
 
 typedef struct Node
     {
-        void* value;
+        int size;
+        void *value;
         struct Node *next, *prev;
     }Node;
 
+typedef struct Node_C
+    {
+        int size;
+        void *value;
+    }Node_C;
 
 typedef struct LinkedList
     {
@@ -16,11 +22,11 @@ typedef struct LinkedList
 
 #endif
 
-LinkedList* newList(int fileSize, char* fileName);
-void insertFirst(LinkedList* list, char* value);
-void insertLast(LinkedList* list, char* value);
-void* removeFirst(LinkedList* list);
-void* removeLast(LinkedList* list);
+LinkedList* newList();
+void insertFirst(LinkedList* list, void* value, int str_Size);
+void insertLast(LinkedList* list, void* value, int str_Size);
+Node_C* removeFirst(LinkedList* list);
+Node_C* removeLast(LinkedList* list);
 
 void freeList(LinkedList* list);
 void freeNode(Node* node);

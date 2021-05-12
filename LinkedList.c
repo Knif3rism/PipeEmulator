@@ -14,20 +14,28 @@
 #define PAGESIZE 4096
 
 
-LinkedList* newList(int fileSize, char* fileName)
+LinkedList* newList()
 {
     struct LinkedList *newList;
 
     newList = mmap(NULL, sizeof(LinkedList*), PROT_READ | PROT_WRITE, MAP_SHARED, 0, 0);
     newList->head = NULL;
     newList->tail = NULL;
+
+    return newList;
 }
 
-void insertFirst(LinkedList* list, char* string)
+void insertFirst(LinkedList* list, void* string, int str_Size)
 {
     struct Node *node;
 
-    node = (void*) string;
+    node = mmap(NULL, sizeof(Node), 
+                PROT_READ | PROT_WRITE, 
+                MAP_SHARED, -1, 0);
+
+    /*value reassignment might cause memory leak, be careful*/
+    node->value = string;
+    node->size = str_Size;
 
     if (list->head == NULL)
     {
@@ -45,11 +53,16 @@ void insertFirst(LinkedList* list, char* string)
 
 }
 
-void insertLast(LinkedList* list, char* string)
+void insertLast(LinkedList* list, void* string, int str_Size)
 {
     struct Node *node;
 
-    node = (void*) string;
+    node = mmap(NULL, sizeof(Node), 
+                PROT_READ | PROT_WRITE, 
+                MAP_SHARED, -1, 0);
+
+    node->value = string;
+    node->size = str_Size;
 
     if (list->tail == NULL)
     {
@@ -66,61 +79,67 @@ void insertLast(LinkedList* list, char* string)
     }
 }
 
-void* removeFirst(LinkedList* list)
-{
-    size_t size;
-    int stat_status, mun_status;
-    struct Node *outValue, *tempNode;
 
+Node_C* removeFirst(LinkedList* list)
+{
+    int mun_status;
+    struct Node *tempNode;
+    struct Node_C *outValue;
+
+    /* Obtain node*/
     outValue = list->head->value;
     tempNode = list->head;
     list->head = list->head->next;
 
-    stat_status = stat(tempNode, size);
-    
-    if (stat_status != 0)
-    {
-        printf(stderr, "%s");
-    }
+    /*Prep string going out*/
+    outValue = mmap(NULL, sizeof(Node_C),
+                    PROT_READ | PROT_WRITE, 
+                    MAP_SHARED, -1, 0);
 
-    mun_status = munmap(tempNode, size);
+    outValue->value = tempNode->value;
+    outValue->size = tempNode->size;
 
+    /* Free Memory */
+    /*mun_status = munmap(tempNode->value, tempNode->size);*/
+    mun_status = munmap(tempNode, sizeof(Node));
     if (mun_status != 0)
     {
-        printf(stderr, "%s");
+        perror("unable to release memory");
     }
 
     return outValue;
 }
 
-void* removeLast(LinkedList* list)
-{
-    size_t size;
-    int stat_status, mun_status;
-    struct Node *outValue, *tempNode;
 
+Node_C* removeLast(LinkedList* list)
+{
+    int mun_status;
+    struct Node *tempNode;
+    struct Node_C *outValue;
+
+    /* Get node */
     outValue = list->tail->value;
     tempNode = list->tail;
     list->head = list->tail->prev;
 
+    /*Prep string going out*/
+    outValue = mmap(NULL, sizeof(Node_C),
+                    PROT_READ | PROT_WRITE, 
+                    MAP_SHARED, -1, 0);
 
-    stat_status = stat(tempNode, size);
-    
-    if (stat_status != 0)
-    {
-        printf(stderr, "%s");
-    }
+    outValue->value = tempNode->value;
+    outValue->size = tempNode->size;
 
-    mun_status = munmap(tempNode, size);
-
+    /* Free Memory */
+    mun_status = munmap(tempNode, sizeof(Node));
     if (mun_status != 0)
     {
-        printf(stderr, "%s");
+        perror("unable to release memory");
     }
-
 
     return outValue;
 }
+
 
 int stringLength(char* string)
 {

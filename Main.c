@@ -21,6 +21,7 @@ int main(int argc, char *argv[])
         {
             printf("%c", theDeetz.file_map[ii]);
         }
+        printf("\n");
     }
     else
     {

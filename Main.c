@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/mman.h>
 
+#include "StringBuilder.h"
 #include "LinkedList.h"
 #include "FileIO.h"
 
@@ -17,11 +18,13 @@ int main(int argc, char *argv[])
     if (argc == 3)
     {
         theDeetz = fileToMem("test.txt");
+        printf("\n---Input---\n");
         for (ii = 0; ii < theDeetz.fileSize; ii++)
         {
             printf("%c", theDeetz.file_map[ii]);
         }
-        printf("\n");
+        printf("\n-----------\n");
+        stringBuilderToList(theDeetz);
     }
     else
     {

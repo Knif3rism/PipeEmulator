@@ -18,9 +18,10 @@ LinkedList* newList()
 {
     struct LinkedList *newList;
 
-    newList = mmap(NULL, sizeof(LinkedList*), PROT_READ | PROT_WRITE, MAP_SHARED, 0, 0);
-    newList->head = NULL;
-    newList->tail = NULL;
+    newList = (LinkedList*) mmap(NULL, sizeof(LinkedList), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+    printf("\nList Created\n");
+    newList->head = 0;
+    newList->tail = 0;
 
     return newList;
 }
@@ -31,7 +32,7 @@ void insertFirst(LinkedList* list, void* string, int str_Size)
 
     node = mmap(NULL, sizeof(Node), 
                 PROT_READ | PROT_WRITE, 
-                MAP_SHARED, -1, 0);
+                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
     /*value reassignment might cause memory leak, be careful*/
     node->value = string;
@@ -59,7 +60,7 @@ void insertLast(LinkedList* list, void* string, int str_Size)
 
     node = mmap(NULL, sizeof(Node), 
                 PROT_READ | PROT_WRITE, 
-                MAP_SHARED, -1, 0);
+                MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
     node->value = string;
     node->size = str_Size;
@@ -94,7 +95,7 @@ Node_C* removeFirst(LinkedList* list)
     /*Prep string going out*/
     outValue = mmap(NULL, sizeof(Node_C),
                     PROT_READ | PROT_WRITE, 
-                    MAP_SHARED, -1, 0);
+                    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
     outValue->value = tempNode->value;
     outValue->size = tempNode->size;
@@ -125,7 +126,7 @@ Node_C* removeLast(LinkedList* list)
     /*Prep string going out*/
     outValue = mmap(NULL, sizeof(Node_C),
                     PROT_READ | PROT_WRITE, 
-                    MAP_SHARED, -1, 0);
+                    MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
     outValue->value = tempNode->value;
     outValue->size = tempNode->size;

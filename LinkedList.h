@@ -12,7 +12,6 @@ typedef struct LinkedList
     {
         Node* head;
         Node* tail;
-        int* mem_map;
     }LinkedList;
 
 #endif
@@ -25,3 +24,5 @@ void* removeLast(LinkedList* list);
 
 void freeList(LinkedList* list);
 void freeNode(Node* node);
+
+int stringLength(char* string);

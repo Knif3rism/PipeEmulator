@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/mman.h>
+
 #include "LinkedList.h"
+#include "FileIO.h"
 
 int main(int argc, char *argv[])
 {
-    LinkedList *list;
-    char *str; 
+    int ii = 0;
+    struct FileInformation theDeetz;
 
 
     /* if the user puts in 2 arguments after executing the file
@@ -13,11 +16,11 @@ int main(int argc, char *argv[])
      */
     if (argc == 3)
     {
-        str = (char*)malloc(sizeof(char));
-        list = newLinkedList();
-        insertFirst(list, (void*)str);
-        freeList(list);
-        printf("Hi you used 2 command line arguments good!\n");
+        theDeetz = fileToMem("test.txt");
+        for (ii = 0; ii < theDeetz.fileSize; ii++)
+        {
+            printf("%c", theDeetz.file_map[ii]);
+        }
     }
     else
     {

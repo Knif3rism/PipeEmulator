@@ -8,8 +8,9 @@
 
 int main(int argc, char *argv[])
 {
-    int ii = 0;
+    int size;
     struct FileInformation theDeetz;
+    struct LinkedList *list;
 
 
     /* if the user puts in 2 arguments after executing the file
@@ -18,13 +19,10 @@ int main(int argc, char *argv[])
     if (argc == 3)
     {
         theDeetz = fileToMem("test.txt");
-        printf("\n---Input---\n");
-        for (ii = 0; ii < theDeetz.fileSize; ii++)
-        {
-            printf("%c", theDeetz.file_map[ii]);
-        }
-        printf("\n-----------\n");
-        stringBuilderToList(theDeetz);
+        list = stringBuilderToList(theDeetz);
+        size = getSize(list);
+        printf("Size of list: %d", size);
+        freeList(list);
     }
     else
     {

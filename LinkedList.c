@@ -41,7 +41,6 @@ void insertFirst(LinkedList* list, void* string, int str_Size)
     if (list->head == NULL)
     {
         node->next = NULL;
-        node->prev = NULL;
         list->head = node;
         list->tail = node;
     }
@@ -56,7 +55,6 @@ void insertFirst(LinkedList* list, void* string, int str_Size)
 
 void insertLast(LinkedList* list, void* string, int str_Size)
 {
-    int jj;
     struct Node *node;
 
     /*value reassignment might cause memory leak, be careful*/
@@ -67,16 +65,16 @@ void insertLast(LinkedList* list, void* string, int str_Size)
     node->value = string;
     node->size = str_Size;
 
+
     if (list->tail == NULL)
     {
         node->next = NULL;
-        node->prev = NULL;
         list->head = node;
         list->tail = node;
     }
     else
     {
-        node->next = list->tail;
+        node->prev = list->tail;
         list->tail->next = node;
         list->tail = node;
     }
@@ -143,17 +141,52 @@ Node_C* removeLast(LinkedList* list)
     return outValue;
 }
 
-
-int stringLength(char* string)
+void freeList(LinkedList* list)
 {
-    int counter, ii;
+    int mun_status;
 
-    ii = 0;
+    freeNode(list->head);
+    mun_status = munmap(list, sizeof(LinkedList));
 
-    while (string[ii] != '\0')
+    if (mun_status != 0)
     {
-        counter++;
+        perror("Unable to free memory.");
+    }
+}
+
+void freeNode(Node* node)
+{
+    int mun_status;
+    if (node->next != NULL)
+    {
+        freeNode(node->next);
+
+        mun_status = munmap(node->value, node->size);
+
+        if (mun_status != 0)
+        {
+            perror("Unable to free node->value memory");
+        }
+
+        mun_status = munmap(node, sizeof(Node));
+
+        if (mun_status != 0)
+        {
+            perror("Unable to free node memory");
+        }
+    }
+}
+
+int getSize(LinkedList *list)
+{
+    int count = 0;
+    Node *curr = list->head;
+
+    while(curr != NULL)
+    {
+        count++;
+        curr = curr->next;
     }
 
-    return counter;
+    return count;
 }

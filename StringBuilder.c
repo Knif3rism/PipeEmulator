@@ -5,9 +5,9 @@
 #include "FileIO.h"
 #include "LinkedList.h"
 
-void stringBuilderToList (struct FileInformation file)
+LinkedList* stringBuilderToList (struct FileInformation file)
 {
-    int ii, jj, status, size_count;
+    int ii, jj, size_count;
     int nullify = 0, prev_nullify = 0, cursor = 0, temp_init;
     char *temp;
     LinkedList *list;
@@ -23,6 +23,12 @@ void stringBuilderToList (struct FileInformation file)
         }
         else
         {
+            /* The else block sets our size_count to the index we find the \n char
+             * subtract the last time we encountered the \n char, as that will set
+             * the size of the given string. temp_init is to properly iterate through our
+             * new memory allocation.
+             */
+
             size_count = nullify - prev_nullify;
             temp_init = 0;
             temp = (char*) mmap(NULL, sizeof(char) * size_count, 
@@ -37,7 +43,6 @@ void stringBuilderToList (struct FileInformation file)
 
             cursor = jj;
             prev_nullify = nullify;
-            printf("%s", temp);
 
             insertLast(list, (void*) temp, nullify+1);
         }
@@ -57,4 +62,6 @@ void stringBuilderToList (struct FileInformation file)
     }
 
     insertLast(list, (void*) temp, nullify+1);
+
+    return list;
 }

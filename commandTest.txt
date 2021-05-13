@@ -3,3 +3,5 @@ echo hello world
 ps
 sudo --version
 echo nice to meet you
+ls -alh
+ls ../

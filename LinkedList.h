@@ -31,4 +31,4 @@ Node_C* removeLast(LinkedList* list);
 void freeList(LinkedList* list);
 void freeNode(Node* node);
 
-int stringLength(char* string);
+int getSize(LinkedList* list);

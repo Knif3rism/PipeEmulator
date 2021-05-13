@@ -1,3 +1,4 @@
 #include "FileIO.h"
+#include "LinkedList.h"
 
-void stringBuilderToList (struct FileInformation file);
+LinkedList* stringBuilderToList (struct FileInformation file);

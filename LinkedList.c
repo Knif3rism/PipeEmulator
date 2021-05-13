@@ -56,8 +56,10 @@ void insertFirst(LinkedList* list, void* string, int str_Size)
 
 void insertLast(LinkedList* list, void* string, int str_Size)
 {
+    int jj;
     struct Node *node;
 
+    /*value reassignment might cause memory leak, be careful*/
     node = mmap(NULL, sizeof(Node), 
                 PROT_READ | PROT_WRITE, 
                 MAP_SHARED | MAP_ANONYMOUS, -1, 0);

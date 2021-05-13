@@ -7,7 +7,8 @@
 
 void stringBuilderToList (struct FileInformation file)
 {
-    int ii, jj, nullify = 0, cursor = 0, status;
+    int ii, jj, status, size_count;
+    int nullify = 0, prev_nullify = 0, cursor = 0, temp_init;
     char *temp;
     LinkedList *list;
 
@@ -22,25 +23,28 @@ void stringBuilderToList (struct FileInformation file)
         }
         else
         {
-            temp = (char*) mmap(NULL, sizeof(char) + nullify, 
+            size_count = nullify - prev_nullify;
+            temp_init = 0;
+            temp = (char*) mmap(NULL, sizeof(char) * size_count, 
                         PROT_READ | PROT_WRITE,
                         MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
-            for(jj = cursor; jj < nullify; jj++)
+            for(jj = cursor; jj < nullify+1; jj++)
             {
-                temp[jj] = file.file_map[jj];
-                printf("%c", temp[jj]);
+                temp[temp_init] = file.file_map[jj];
+                temp_init++;
             }
 
-
             cursor = jj;
+            prev_nullify = nullify;
+            printf("%s", temp);
 
-            status = munmap(temp, sizeof(char) + nullify);
-
-            /*insertLast(list, (void*) temp, nullify+1);*/
+            insertLast(list, (void*) temp, nullify+1);
         }
     }
 
+    /* we do this once again so that we can read the last line */
+    temp_init = 0;
 
     temp = (char*) mmap(NULL, sizeof(char) + nullify, 
                 PROT_READ | PROT_WRITE,
@@ -48,12 +52,9 @@ void stringBuilderToList (struct FileInformation file)
 
     for(jj = cursor; jj < file.fileSize; jj++)
     {
-        temp[jj] = file.file_map[jj];
-        printf("%c", temp[jj]);
+        temp[temp_init] = file.file_map[jj];
+        temp_init++;
     }
 
-    status = munmap(temp, sizeof(char) + nullify);
-
-    printf("\n");
-
+    insertLast(list, (void*) temp, nullify+1);
 }

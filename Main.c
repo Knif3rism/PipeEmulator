@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
     int size;
     struct FileInformation theDeetz;
     struct LinkedList *list;
+    Node_C *tempVar;
 
 
     /* if the user puts in 2 arguments after executing the file
@@ -21,7 +22,7 @@ int main(int argc, char *argv[])
         theDeetz = fileToMem("test.txt");
         list = stringBuilderToList(theDeetz);
         size = getSize(list);
-        printf("Size of list: %d", size);
+        printf("Size of list: %d\n", size);
         freeList(list);
     }
     else
@@ -31,3 +32,4 @@ int main(int argc, char *argv[])
     
     return 0;
 }
+

@@ -1,6 +1,6 @@
 ls -l
 echo hello world
-ps
+ps aux
 sudo --version
 echo nice to meet you
 ls -alh

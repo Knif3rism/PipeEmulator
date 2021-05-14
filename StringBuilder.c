@@ -17,28 +17,34 @@ LinkedList* stringBuilderToList (struct FileInformation file)
     
     for (ii = 0; ii < file.fileSize; ii++)
     {
-        if (file.file_map[ii] != '\n')
+        /*if (file.file_map[ii] != '\n')
         {
             nullify++;
-        }
-        else
+        }*/
+        if (file.file_map[ii] == '\n')
         {
+            nullify = ii;
             /* The else block sets our size_count to the index we find the \n char
              * subtract the last time we encountered the \n char, as that will set
              * the size of the given string. temp_init is to properly iterate through our
              * new memory allocation.
              */
-
+            
             size_count = nullify - prev_nullify;
             temp_init = 0;
             temp = (char*) mmap(NULL, sizeof(char) * size_count, 
                         PROT_READ | PROT_WRITE,
                         MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
-            for(jj = cursor; jj < nullify+1; jj++)
+            for(jj = cursor; jj < nullify; jj++)
             {
                 temp[temp_init] = file.file_map[jj];
                 temp_init++;
+            }
+
+            if (temp[temp_init] != '\n')
+            {
+                temp[temp_init] = '\n';
             }
 
             cursor = jj;
@@ -59,6 +65,11 @@ LinkedList* stringBuilderToList (struct FileInformation file)
     {
         temp[temp_init] = file.file_map[jj];
         temp_init++;
+    }
+
+    if (temp[temp_init] != '\n')
+    {
+        temp[temp_init] = '\n';
     }
 
     insertLast(list, (void*) temp, nullify+1);

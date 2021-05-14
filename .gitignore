@@ -1,2 +1,7 @@
 .vscode/c_cpp_properties.json
 .vscode/settings.json
+StringBuilder.o
+Main.o
+LinkedList.o
+FileIO.o
+pipeline

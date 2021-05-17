@@ -42,9 +42,9 @@ LinkedList* stringBuilderToList (struct FileInformation file)
                 temp_init++;
             }
 
-            if (temp[temp_init] != '\n')
+            if (temp[temp_init] != '\0')
             {
-                temp[temp_init] = '\n';
+                temp[temp_init] = '\0';
             }
 
             cursor = jj;
@@ -67,9 +67,9 @@ LinkedList* stringBuilderToList (struct FileInformation file)
         temp_init++;
     }
 
-    if (temp[temp_init] != '\n')
+    if (temp[temp_init] != '\0')
     {
-        temp[temp_init] = '\n';
+        temp[temp_init] = '\0';
     }
 
     insertLast(list, (void*) temp, nullify+1);

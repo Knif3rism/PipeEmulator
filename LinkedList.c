@@ -159,6 +159,7 @@ void freeNode(Node* node)
     int mun_status;
     if (node->next != NULL)
     {
+        printf("%s", (char*) node->value);
         freeNode(node->next);
 
         mun_status = munmap(node->value, node->size);

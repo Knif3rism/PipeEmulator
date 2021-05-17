@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 #include "StringBuilder.h"
 #include "LinkedList.h"
@@ -8,7 +10,7 @@
 
 int main(int argc, char *argv[])
 {
-    int size;
+    int size, status;
     struct FileInformation theDeetz;
     struct LinkedList *list;
     Node_C *tempVar;
@@ -21,9 +23,25 @@ int main(int argc, char *argv[])
     {
         theDeetz = fileToMem("test.txt");
         list = stringBuilderToList(theDeetz);
-        size = getSize(list);
-        printf("Size of list: %d\n", size);
+        tempVar = removeFirst(list);
+        printf("%s", (char*) tempVar->value);
+        tempVar = removeFirst(list);
+        printf("%s", (char*) tempVar->value);
+        tempVar = removeFirst(list);
+        printf("%s", (char*) tempVar->value);
+        tempVar = removeFirst(list);
+        printf("%s", (char*) tempVar->value);
+
         freeList(list);
+
+        status = close(theDeetz.fd);
+        if (status != 0)
+        {
+            perror("cant close fd");
+        }
+
+        status = munmap((void*) theDeetz.file_map, theDeetz.fileSize);
+
     }
     else
     {
@@ -32,4 +50,3 @@ int main(int argc, char *argv[])
     
     return 0;
 }
-

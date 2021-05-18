@@ -4,4 +4,3 @@ ps aux
 sudo --version
 echo nice to meet you
 ls -alh
-ls ../

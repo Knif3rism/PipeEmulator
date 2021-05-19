@@ -1,28 +1,25 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm -std=gnu11
-OBJ = Main.o LinkedList.o FileIO.o StringBuilder.o CommandExecutor.o
+OBJ = Main.o LinkedList.o FileIO.o StringBuilder.o
 EXEC = pipeline
 
 pipeline: $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) -lm
 
-link: Main.c LinkedList.c FileIO.c StringBuilder.c CommandExecutor.c
-	$(CC) Main.c LinkedList.c FileIO.c StringBuilder.c CommandExecutor.c
+link: Main.c LinkedList.c FileIO.c StringBuilder.c
+	$(CC) Main.c LinkedList.c FileIO.c StringBuilder.c 
 
 main: Main.c 
-	$(CC) -c Main.c -g
+	$(CC) $(CFLAGS) -c Main.c -g
 
 linkedlist: LinkedList.c
-	$(CC) -c LinkedList.c -g 
+	$(CC) $(CFLAGS) -c LinkedList.c -g 
 
 fileio: FileIO.c
-	$(CC) -c FileIO.c -g
+	$(CC) $(CFLAGS) -c FileIO.c -g
 
 stringbuilder: StringBuilder.c
-	$(CC) -c StringBuilder.c -g
-
-commandexecutor: CommandExecutor.c
-	$(CC) -c CommandExecutor.c
+	$(CC) $(CFLAGS) -c StringBuilder.c -g
 
 clean:
 	rm -f $(EXEC) $(OBJ)

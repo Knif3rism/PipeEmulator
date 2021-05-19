@@ -1,6 +1,9 @@
 #include <unistd.h>
 #include <sched.h>
 #include <sys/mman.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 
 #include "LinkedList.h"
 #include "CommandExecutor.h"
@@ -17,6 +20,7 @@ void manager(LinkedList list)
     int pipeArr[2];
     char *stack;
     char *stackTop;
+    void (*cmdExec) (LinkedList, int);
 
     int status;
     pid_t pid;
@@ -31,11 +35,11 @@ void manager(LinkedList list)
     
     stackTop = stack + STACK_SIZE;
 
-    /* spawn child processes based on the size of the linked list */
-
     pipe(pipeArr);
 
-    clone((void (*cmdExec) (list, pipeArr)), STACK, )
+    /* spawn child processes based on the size of the linked list */
+
+    clone(&cmdExec, stackTop, SIGCHLD, list, pipeArr);
 
     
 }

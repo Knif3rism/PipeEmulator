@@ -1,7 +1,16 @@
 .vscode/c_cpp_properties.json
 .vscode/settings.json
+.test_bench/
 StringBuilder.o
 Main.o
 LinkedList.o
 FileIO.o
 pipeline
+test_bench/test.c
+test_bench/test
+test_bench/StringSplitter.c
+test_bench/StringSplitter.h
+test_bench/makefile
+test_bench/bingbong
+test_bench/StringSplitter.o
+test_bench/test.o

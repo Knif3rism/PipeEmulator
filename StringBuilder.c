@@ -5,6 +5,9 @@
 #include "FileIO.h"
 #include "LinkedList.h"
 
+#define ARR_SIZE 64
+#define STR_SIZE 256
+
 LinkedList* stringBuilderToList (struct FileInformation file)
 {
     int ii, jj, size_count;
@@ -17,10 +20,6 @@ LinkedList* stringBuilderToList (struct FileInformation file)
     
     for (ii = 0; ii < file.fileSize; ii++)
     {
-        /*if (file.file_map[ii] != '\n')
-        {
-            nullify++;
-        }*/
         if (file.file_map[ii] == '\n')
         {
             nullify = ii;
@@ -75,4 +74,116 @@ LinkedList* stringBuilderToList (struct FileInformation file)
     insertLast(list, (void*) temp, nullify+1);
 
     return list;
+}
+
+
+int wordCount(char* str)
+{
+    int ii = 0, space_counter = 0;
+
+    while(str[ii] != '\0')
+    {
+        if (str[ii] == ' ')
+        {
+            space_counter++;
+        }
+        
+        ii++;
+    }
+
+    /*we do +1 to the original counter as it will always miss the first word as it starts at 0*/
+    return space_counter+1;
+}
+
+
+char** splitString(char* str, int amt_space)
+{
+    /*if we don't know word count then force to word count as param*/
+    char** stringArr;
+    int ii = 0, arr_count = 0, tempStr_size = 0, jj;
+    char* tempStr;
+    /*delimiter is always going to be space*/
+    
+
+    stringArr = mmap(NULL, ARR_SIZE, PROT_READ | PROT_WRITE, 
+                     MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    tempStr = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
+                   MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    do    
+    {
+        if (str[ii] != '-')
+        {      
+            /*if it isn't a '-' character then we add on a char at the end of current string*/
+            tempStr[tempStr_size] = str[ii];
+            tempStr_size++;
+        }
+        else
+        {
+            /*else there is a space char, then add the word into the string array*/
+            if (arr_count > 0)
+            {
+                for (jj = tempStr_size; jj >= 0; jj--)
+                {
+                    tempStr[jj+1] = tempStr[jj];
+                }
+                tempStr[0] = '-';
+            }
+
+            stringArr[arr_count] = tempStr;
+            arr_count++;
+            tempStr = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
+                           MAP_PRIVATE | 0x20, -1, 0);
+            tempStr_size = 0;
+        }
+
+        ii++;
+    }      
+    while (str[ii] != '\0');      
+
+
+    for (jj = tempStr_size; jj >= 0; jj--)
+    {
+        tempStr[jj+1] = tempStr[jj];
+    }
+    tempStr[0] = '-';
+    stringArr[arr_count] = tempStr;
+
+
+    /*As execv needs null terminated strings, we add null at the end of the string*/
+    stringArr[arr_count+1] = NULL;
+
+    return stringArr;
+}
+
+/* this function assumes that str1 is a literal path */
+char* stringAppender(char* str1, char* str2)
+{
+    int ii = 0, jj = 0;
+    char* str3;
+
+    str3 = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
+                MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+
+    while (str1[ii] != '\0')
+    {
+        str3[ii] = str1[ii];
+        ii++;
+    }
+
+    while (str2[jj] != '\0')
+    {
+        /* to ensure only printable characters are used */
+        if ((str2[jj] < '~' && str2[jj] > '!'))
+        {
+            str3[ii+jj] = str2[jj];
+        }
+        
+        jj++;
+    }
+
+    str3[ii+jj+1] = '\0';
+
+    return str3;
 }

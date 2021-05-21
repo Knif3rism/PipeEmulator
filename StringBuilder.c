@@ -102,6 +102,7 @@ char** splitString(char* str, int amt_space)
     char** stringArr;
     int ii = 0, arr_count = 0, tempStr_size = 0, jj;
     char* tempStr;
+    int tryIt;
     /*delimiter is always going to be space*/
     
 
@@ -113,17 +114,19 @@ char** splitString(char* str, int amt_space)
 
     do    
     {
-        if (str[ii] != '-')
-        {      
+        if ((str[ii] <= 'Z' && str[ii] >= 'A') || (str[ii] <= 'z' && str[ii] >= 'a') || 
+            (str[ii] == '.') || (str[ii] == '-'))
+        {  
             /*if it isn't a '-' character then we add on a char at the end of current string*/
             tempStr[tempStr_size] = str[ii];
             tempStr_size++;
         }
         else
-        {
+        {  
             /*else there is a space char, then add the word into the string array*/
-            if (arr_count > 0)
+            if (str[ii] == '-')
             {
+                printf("\noi mate: %d\n", str[ii]);
                 for (jj = tempStr_size; jj >= 0; jj--)
                 {
                     tempStr[jj+1] = tempStr[jj];
@@ -134,7 +137,7 @@ char** splitString(char* str, int amt_space)
             stringArr[arr_count] = tempStr;
             arr_count++;
             tempStr = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
-                           MAP_PRIVATE | 0x20, -1, 0);
+                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
             tempStr_size = 0;
         }
 
@@ -143,11 +146,7 @@ char** splitString(char* str, int amt_space)
     while (str[ii] != '\0');      
 
 
-    for (jj = tempStr_size; jj >= 0; jj--)
-    {
-        tempStr[jj+1] = tempStr[jj];
-    }
-    tempStr[0] = '-';
+
     stringArr[arr_count] = tempStr;
 
 
@@ -175,7 +174,7 @@ char* stringAppender(char* str1, char* str2)
     while (str2[jj] != '\0')
     {
         /* to ensure only printable characters are used */
-        if ((str2[jj] < '~' && str2[jj] > '!'))
+        if ((str2[jj] < '~' && str2[jj] > '0'))
         {
             str3[ii+jj] = str2[jj];
         }

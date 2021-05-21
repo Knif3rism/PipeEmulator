@@ -1,6 +1,1 @@
-ls -l
-echo hello world
-ps aux
-sudo --version
-echo nice to meet you
-ls -alh
+find . -type d

@@ -3,6 +3,7 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "StringBuilder.h"
 #include "LinkedList.h"
@@ -10,10 +11,13 @@
 
 int main(int argc, char *argv[])
 {
-    int size, status;
+    int status;
     struct FileInformation theDeetz;
     struct LinkedList *list;
-    Node_C *tempVar;
+    Node_C *tempNode;
+    int count, ii = 0;
+    char *program;
+    char **arguments;    
 
 
     /* if the user puts in 2 arguments after executing the file
@@ -23,16 +27,31 @@ int main(int argc, char *argv[])
     {
         theDeetz = fileToMem("test.txt");
         list = stringBuilderToList(theDeetz);
-        tempVar = removeFirst(list);
-        printf("%s", (char*) tempVar->value);
-        tempVar = removeFirst(list);
-        printf("%s", (char*) tempVar->value);
-        tempVar = removeFirst(list);
-        printf("%s", (char*) tempVar->value);
-        tempVar = removeFirst(list);
-        printf("%s", (char*) tempVar->value);
 
-        freeList(list);
+
+        /* exec commands */
+
+
+        tempNode = removeFirst(list);
+
+        count = wordCount((char*) tempNode->value);
+
+        arguments = splitString((char*) tempNode->value, count);
+        program = stringAppender("/bin/", arguments[0]);
+        printf("path: %s\n", program);
+
+        while (arguments[ii] != NULL)
+        {
+            printf("ii(%d): %s\n", ii, arguments[ii]);
+            ii++;
+        }
+
+        status = execv(program, arguments);
+        if (status != 0)
+        {
+            perror("Something went wrong with execv()");
+        }
+
 
         status = close(theDeetz.fd);
         if (status != 0)

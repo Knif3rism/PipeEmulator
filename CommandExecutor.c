@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 
+#include "StringBuilder.h"
 #include "LinkedList.h"
 #include "CommandExecutor.h"
 
@@ -25,6 +26,7 @@ void manager(LinkedList list)
     int status;
     pid_t pid;
 
+    /*
     stack = mmap(NULL,  STACK_SIZE, PROT_READ | PROT_WRITE, 
                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
                     
@@ -35,26 +37,36 @@ void manager(LinkedList list)
     
     stackTop = stack + STACK_SIZE;
 
-    pipe(pipeArr);
+    pipe(pipeArr); */
 
     /* spawn child processes based on the size of the linked list */
 
-    clone(&cmdExec, stackTop, SIGCHLD, list, pipeArr);
+    /* clone(&cmdExec, stackTop, SIGCHLD, list, pipeArr); */
 
     
 }
 
-void cmdExec(LinkedList list, int pipeArr[])
+void cmdExec(LinkedList *list, int pipeArr[])
 {
-    int status;
-    char* program;
-    char** arguments;
+    Node_C *tempNode;
+    int status, count;
+    char *program;
+    char **arguments;
 
-    write(pipeArr[1], execv(program, arguments), MSG_SIZE);
+    tempNode = removeFirst(list);
+
+    count = wordCount((char*) tempNode->value);
+
+    arguments = splitString((char*) tempNode->value, count);
+    program = stringAppender("/bin/", arguments[0]);
+        
+
+    status = execv(program, arguments);
     if (status != 0)
     {
-        perror("Something went wrong with pipe");
+        perror("Something went wrong with execv()");
     }
+
 
     
 }

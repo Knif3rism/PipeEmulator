@@ -11,4 +11,4 @@ typedef struct childProc
 
 #endif
 
-void cmdExec(LinkedList list, int pipeArr[]);
+void cmdExec(LinkedList *list, int pipeArr[]);

@@ -100,8 +100,7 @@ Node_C* removeFirst(LinkedList* list)
     outValue->value = tempNode->value;
     outValue->size = tempNode->size;
 
-    /* Free Memory */
-    /*mun_status = munmap(tempNode->value, tempNode->size);*/
+    /* Free Memory */   
     mun_status = munmap(tempNode, sizeof(Node));
     if (mun_status != 0)
     {

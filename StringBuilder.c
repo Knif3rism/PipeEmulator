@@ -102,8 +102,6 @@ char** splitString(char* str, int amt_space)
     char** stringArr;
     int ii = 0, arr_count = 0, tempStr_size = 0, jj;
     char* tempStr;
-    int tryIt;
-    /*delimiter is always going to be space*/
     
 
     stringArr = mmap(NULL, ARR_SIZE, PROT_READ | PROT_WRITE, 
@@ -115,30 +113,24 @@ char** splitString(char* str, int amt_space)
     do    
     {
         if ((str[ii] <= 'Z' && str[ii] >= 'A') || (str[ii] <= 'z' && str[ii] >= 'a') || 
-            (str[ii] == '.') || (str[ii] == '-'))
+            (str[ii] == '.') || (str[ii] == '-') || (str[ii] == '/') || (str[ii] == '_'))
         {  
-            /*if it isn't a '-' character then we add on a char at the end of current string*/
+            /*if it's between the alphabet or special characters '.' and '-' then submit it to the tempString*/
             tempStr[tempStr_size] = str[ii];
             tempStr_size++;
         }
         else
         {  
-            /*else there is a space char, then add the word into the string array*/
-            if (str[ii] == '-')
+            /*add the word into the string array*/
+            if (*tempStr != 0)
             {
-                printf("\noi mate: %d\n", str[ii]);
-                for (jj = tempStr_size; jj >= 0; jj--)
-                {
-                    tempStr[jj+1] = tempStr[jj];
-                }
-                tempStr[0] = '-';
+                stringArr[arr_count] = tempStr;
+                arr_count++;
+                tempStr = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
+                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+                tempStr_size = 0;
             }
 
-            stringArr[arr_count] = tempStr;
-            arr_count++;
-            tempStr = mmap(NULL, STR_SIZE, PROT_READ | PROT_WRITE,
-                           MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-            tempStr_size = 0;
         }
 
         ii++;
@@ -146,8 +138,11 @@ char** splitString(char* str, int amt_space)
     while (str[ii] != '\0');      
 
 
-
-    stringArr[arr_count] = tempStr;
+    if (*tempStr != 0)
+    {
+        stringArr[arr_count] = tempStr;
+        arr_count++;
+    }
 
 
     /*As execv needs null terminated strings, we add null at the end of the string*/

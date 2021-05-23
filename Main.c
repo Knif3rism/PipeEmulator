@@ -28,8 +28,9 @@ int main(int argc, char *argv[])
         theDeetz = fileToMem("test.txt");
         list = stringBuilderToList(theDeetz);
 
+        initiatorProcess(list);
 
-        /* exec commands */
+        /* exec commands 
 
 
         tempNode = removeFirst(list);
@@ -39,7 +40,7 @@ int main(int argc, char *argv[])
         arguments = splitString((char*) tempNode->value, count);
         program = stringAppender("/bin/", arguments[0]);
         printf("path: %s\n", program);
-
+        
         while (arguments[ii] != NULL)
         {
             printf("ii(%d): %s\n", ii, arguments[ii]);
@@ -59,7 +60,7 @@ int main(int argc, char *argv[])
             perror("cant close fd");
         }
 
-        status = munmap((void*) theDeetz.file_map, theDeetz.fileSize);
+        status = munmap((void*) theDeetz.file_map, theDeetz.fileSize);*/
 
     }
     else

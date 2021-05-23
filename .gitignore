@@ -14,3 +14,6 @@ test_bench/makefile
 test_bench/bingbong
 test_bench/StringSplitter.o
 test_bench/test.o
+test_bench/pipe_test.c
+test_bench/pipe
+CommandExecutor.o

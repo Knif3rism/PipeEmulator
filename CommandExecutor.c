@@ -1,10 +1,14 @@
+#define _GNU_SOURCE  
 #include <unistd.h>
 #include <sched.h>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <signal.h>
+#include <stdio.h>
 
+#include "FileIO.h"
 #include "StringBuilder.h"
 #include "LinkedList.h"
 #include "CommandExecutor.h"
@@ -12,61 +16,85 @@
 #define STACK_SIZE 4096
 #define MSG_SIZE 2048
 
-void manager(LinkedList list)
+/* pipe as a global variable 
+* fd[0] - read only
+* fd[1] - write only
+*/
+int fd[2];
+
+void initiatorProcess(LinkedList *list)
 {
-    /*
-     * pipeArr[0] - read only
-     * pipeArr[1] - write only
-     */
-    int pipeArr[2];
+
+    int ii, size_list;
     char *stack;
     char *stackTop;
-    void (*cmdExec) (LinkedList, int);
 
-    int status;
     pid_t pid;
-
-    /*
+    Node_C *tempNode;
+    
     stack = mmap(NULL,  STACK_SIZE, PROT_READ | PROT_WRITE, 
                         MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
                     
     if (stack == MAP_FAILED)
     {
-        perror("mmap failed");
+        write(2, "mmap failed", MSG_SIZE);
     }
     
     stackTop = stack + STACK_SIZE;
 
-    pipe(pipeArr); */
+    pipe(fd);
+    pipe(fd2);
 
     /* spawn child processes based on the size of the linked list */
 
-    /* clone(&cmdExec, stackTop, SIGCHLD, list, pipeArr); */
+    size_list = getSize(list);
+    ii = 0;
 
-    
+    while (ii < size_list)
+    {
+        tempNode = removeFirst(list);        
+        pid = clone(cmdExec, stackTop, SIGCHLD, tempNode);
+
+        if (pid == -1)
+        {
+            write(2, "An error has occured in clone(): ", MSG_SIZE);
+        }
+        else
+        {
+            dup2(fd[0], STDIN_FILENO);
+            close(fd[1]);
+            waitpid(pid, NULL, 0);
+        }
+
+        ii++;
+    }
 }
 
-void cmdExec(LinkedList *list, int pipeArr[])
+int cmdExec(void *arg)
 {
-    Node_C *tempNode;
-    int status, count;
+    Node_C *temp = (Node_C*) arg;
+    int count, status, ii = 0;
     char *program;
     char **arguments;
 
-    tempNode = removeFirst(list);
+    count = wordCount((char*) temp->value);
 
-    count = wordCount((char*) tempNode->value);
-
-    arguments = splitString((char*) tempNode->value, count);
+    arguments = splitString((char*) temp->value, count);
     program = stringAppender("/bin/", arguments[0]);
-        
 
-    status = execv(program, arguments);
-    if (status != 0)
+    dup2(fd[1], STDOUT_FILENO);
+    close(fd[0]);
+    status = execve(program, arguments, NULL);
+
+    if (status == -1)
     {
-        perror("Something went wrong with execv()");
+        program = stringAppender("/usr/bin", arguments[0]);
+        status = execve(program, arguments, NULL);
+        if (status == -1)
+        {
+            write(2, "There was an error executing the command: ", MSG_SIZE);
+        }
     }
 
-
-    
+    exit(0);
 }

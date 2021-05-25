@@ -100,7 +100,7 @@ char** splitString(char* str, int amt_space)
 {
     /*if we don't know word count then force to word count as param*/
     char** stringArr;
-    int ii = 0, arr_count = 0, tempStr_size = 0, jj;
+    int ii = 0, arr_count = 0, tempStr_size = 0;
     char* tempStr;
     
 

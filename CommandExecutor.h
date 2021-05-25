@@ -12,5 +12,5 @@ typedef struct childProc
 
 #endif
 
-void initiatorProcess(LinkedList *list);
+void initiatorProcess(LinkedList *list, char *fileName);
 int cmdExec(void *arg);

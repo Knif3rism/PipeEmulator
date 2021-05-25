@@ -5,67 +5,44 @@
 #include <unistd.h>
 #include <string.h>
 
+#include "CommandExecutor.h"
 #include "StringBuilder.h"
 #include "LinkedList.h"
 #include "FileIO.h"
 
+#define MSG_SIZE 2048
+
 int main(int argc, char *argv[])
 {
-    int status;
-    struct FileInformation theDeetz;
+    struct FileInformation fileInfo;
     struct LinkedList *list;
-    Node_C *tempNode;
-    int count, ii = 0;
-    char *program;
-    char **arguments;    
 
 
     /* if the user puts in 2 arguments after executing the file
      * then continue with normal program function
      */
-    if (argc == 3)
+    if (argc == 2) /* no output file specified */
     {
-        theDeetz = fileToMem("test.txt");
-        list = stringBuilderToList(theDeetz);
-
-        initiatorProcess(list);
-
-        /* exec commands 
-
-
-        tempNode = removeFirst(list);
-
-        count = wordCount((char*) tempNode->value);
-
-        arguments = splitString((char*) tempNode->value, count);
-        program = stringAppender("/bin/", arguments[0]);
-        printf("path: %s\n", program);
-        
-        while (arguments[ii] != NULL)
+        fileInfo = fileToMem(argv[1]);
+        if (fileInfo.fd != 0)
         {
-            printf("ii(%d): %s\n", ii, arguments[ii]);
-            ii++;
+            list = stringBuilderToList(fileInfo);
+            initiatorProcess(list, NULL);
         }
-
-        status = execv(program, arguments);
-        if (status != 0)
+    }
+    else if (argc == 3) /* output file specified */
+    {
+        fileInfo = fileToMem(argv[1]);
+        if (fileInfo.fd != 0)
         {
-            perror("Something went wrong with execv()");
+            list = stringBuilderToList(fileInfo);
+            initiatorProcess(list, argv[2]);
         }
-
-
-        status = close(theDeetz.fd);
-        if (status != 0)
-        {
-            perror("cant close fd");
-        }
-
-        status = munmap((void*) theDeetz.file_map, theDeetz.fileSize);*/
 
     }
     else
     {
-        printf("To use:\n./pipeline [inputfile] [outputfile]\n");
+        write(1, "To use:\n./pipesim [inputfile] [outputfile]\n[outputfile] is optional, if you don't put in a file to output to, then output will be displayed on the terminal\n", 157);
     }
     
     return 0;

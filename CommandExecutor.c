@@ -14,7 +14,7 @@
 #include "CommandExecutor.h"
 
 #define STACK_SIZE 4096
-#define MSG_SIZE 2048
+#define MSG_SIZE 128
 
 /* pipe as a global variable 
 * fd[0] - read only
@@ -22,10 +22,10 @@
 */
 int fd[2];
 
-void initiatorProcess(LinkedList *list)
+void initiatorProcess(LinkedList *list, char *fileName)
 {
 
-    int ii, size_list;
+    int ii, size_list, status;
     char *stack;
     char *stackTop;
 
@@ -33,17 +33,17 @@ void initiatorProcess(LinkedList *list)
     Node_C *tempNode;
     
     stack = mmap(NULL,  STACK_SIZE, PROT_READ | PROT_WRITE, 
-                        MAP_PRIVATE | MAP_ANONYMOUS | MAP_STACK, -1, 0);
+                        MAP_SHARED | MAP_ANONYMOUS | MAP_STACK, -1, 0);
                     
     if (stack == MAP_FAILED)
     {
-        write(2, "mmap failed", MSG_SIZE);
+        write(2, "mmap failed", 12);
     }
     
     stackTop = stack + STACK_SIZE;
 
     pipe(fd);
-    pipe(fd2);
+
 
     /* spawn child processes based on the size of the linked list */
 
@@ -57,23 +57,29 @@ void initiatorProcess(LinkedList *list)
 
         if (pid == -1)
         {
-            write(2, "An error has occured in clone(): ", MSG_SIZE);
+            write(2, "An error has occured in clone(): ", 34);
         }
-        else
+        else /* parent */
         {
-            dup2(fd[0], STDIN_FILENO);
             close(fd[1]);
+            dup2(fd[0], STDIN_FILENO);
             waitpid(pid, NULL, 0);
         }
 
         ii++;
     }
+
+    /*if (writeOut(fd, fileName))
+    {
+        write(2, "cannot write to file abort, print to screen", 44);
+    }*/
+
 }
 
 int cmdExec(void *arg)
 {
     Node_C *temp = (Node_C*) arg;
-    int count, status, ii = 0;
+    int count, status;
     char *program;
     char **arguments;
 
@@ -82,8 +88,8 @@ int cmdExec(void *arg)
     arguments = splitString((char*) temp->value, count);
     program = stringAppender("/bin/", arguments[0]);
 
-    dup2(fd[1], STDOUT_FILENO);
     close(fd[0]);
+    dup2(fd[1], STDOUT_FILENO);
     status = execve(program, arguments, NULL);
 
     if (status == -1)
@@ -92,7 +98,7 @@ int cmdExec(void *arg)
         status = execve(program, arguments, NULL);
         if (status == -1)
         {
-            write(2, "There was an error executing the command: ", MSG_SIZE);
+            write(2, "There was an error executing the command: ", 43);
         }
     }
 

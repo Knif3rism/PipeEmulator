@@ -14,3 +14,4 @@ typedef struct FileInformation
 #endif
 
 FileInformation fileToMem(char *fileName);
+int writeOut(int fd[], char *fileName);

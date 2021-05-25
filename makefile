@@ -1,9 +1,9 @@
 CC = gcc
 CFLAGS = -Wall -ansi -pedantic -g -lm -std=gnu11
 OBJ = Main.o LinkedList.o FileIO.o StringBuilder.o CommandExecutor.o
-EXEC = pipeline
+EXEC = pipesim
 
-pipeline: $(OBJ)
+pipesim: $(OBJ)
 	$(CC) $(OBJ) -o $(EXEC) -lm
 
 link: Main.c LinkedList.c FileIO.c StringBuilder.c CommandExecutor.c
@@ -23,6 +23,9 @@ stringbuilder: StringBuilder.c
 
 commandexecutor: CommandExecutor.c
 	$(CC) $(CFLAGS) -c CommandExecutor.c
+
+test: LinkedListTest.c
+	$(CC) $(CFLAGS) LinkedListTest.c LinkedList.c -o test
 
 clean:
 	rm -f $(EXEC) $(OBJ)

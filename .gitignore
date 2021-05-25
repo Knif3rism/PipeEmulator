@@ -5,7 +5,7 @@ StringBuilder.o
 Main.o
 LinkedList.o
 FileIO.o
-pipeline
+pipesim
 test_bench/test.c
 test_bench/test
 test_bench/StringSplitter.c
@@ -17,3 +17,4 @@ test_bench/test.o
 test_bench/pipe_test.c
 test_bench/pipe
 CommandExecutor.o
+test

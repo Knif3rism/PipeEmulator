@@ -10,16 +10,16 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "LinkedList.h"
+#include <unistd.h>
 
 #define PAGESIZE 4096
-
+#define ERR_MSG_SIZE 256
 
 LinkedList* newList()
 {
     struct LinkedList *newList;
 
     newList = (LinkedList*) mmap(NULL, sizeof(LinkedList), PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-    printf("\nList Created\n");
     newList->head = 0;
     newList->tail = 0;
 
@@ -104,7 +104,7 @@ Node_C* removeFirst(LinkedList* list)
     mun_status = munmap(tempNode, sizeof(Node));
     if (mun_status != 0)
     {
-        perror("unable to release memory");
+        write(2, "unable to release memory", 25);
     }
 
     return outValue;
@@ -134,7 +134,7 @@ Node_C* removeLast(LinkedList* list)
     mun_status = munmap(tempNode, sizeof(Node));
     if (mun_status != 0)
     {
-        perror("unable to release memory");
+        write(2, "unable to release memory", 25);
     }
 
     return outValue;
@@ -149,30 +149,29 @@ void freeList(LinkedList* list)
 
     if (mun_status != 0)
     {
-        perror("Unable to free memory.");
+        write(2, "unable to release memory", 25);
     }
 }
 
 void freeNode(Node* node)
 {
     int mun_status;
-    if (node->next != NULL)
+    if ((node->next != NULL) || (node != NULL))
     {
-        printf("%s", (char*) node->value);
         freeNode(node->next);
 
         mun_status = munmap(node->value, node->size);
 
         if (mun_status != 0)
         {
-            perror("Unable to free node->value memory");
+            write(2, "Unable to free node->value memory", 34);
         }
 
         mun_status = munmap(node, sizeof(Node));
 
         if (mun_status != 0)
         {
-            perror("Unable to free node memory");
+            write(2, "Unable to free node memory", ERR_MSG_SIZE);
         }
     }
 }

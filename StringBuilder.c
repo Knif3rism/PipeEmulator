@@ -23,7 +23,7 @@ LinkedList* stringBuilderToList (struct FileInformation file)
         if (file.file_map[ii] == '\n')
         {
             nullify = ii;
-            /* The else block sets our size_count to the index we find the \n char
+            /* The if block sets our size_count to the index we find the \n char
              * subtract the last time we encountered the \n char, as that will set
              * the size of the given string. temp_init is to properly iterate through our
              * new memory allocation.
